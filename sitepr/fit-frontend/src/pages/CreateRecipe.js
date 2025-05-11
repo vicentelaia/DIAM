@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
-import { Button, Form, FormGroup, Input, Label, Container, Row, Col } from 'reactstrap';
-import api from '../services/api';
+import { Button, Form, FormGroup, Input, Label, Container, Row, Col, Alert } from 'reactstrap';
 import { useNavigate } from 'react-router-dom';
+import api from '../api';
 
 function CreateRecipe() {
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
   const [recipe, setRecipe] = useState({
     title: '',
     description: '',
@@ -31,6 +33,8 @@ function CreateRecipe() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true);
+    setError('');
     
     const formData = new FormData();
     formData.append('title', recipe.title);
@@ -43,16 +47,30 @@ function CreateRecipe() {
     }
 
     try {
-      await api.post('/recipes/', formData, {
+      console.log('Enviando dados para a API...');
+      const response = await api.post('/api/recipes/', formData, {
         headers: {
           'Content-Type': 'multipart/form-data',
         },
       });
+      console.log('Resposta da API:', response.data);
       alert('Receita criada com sucesso!');
       navigate('/');
     } catch (error) {
       console.error('Erro ao criar receita:', error);
-      alert('Erro ao criar receita. Por favor, tente novamente.');
+      if (error.response) {
+        // O servidor respondeu com um status de erro
+        console.error('Dados do erro:', error.response.data);
+        setError(error.response.data.message || 'Erro ao criar receita. Verifique os dados e tente novamente.');
+      } else if (error.request) {
+        // A requisição foi feita mas não houve resposta
+        setError('Não foi possível conectar ao servidor. Verifique se o servidor está rodando.');
+      } else {
+        // Erro ao configurar a requisição
+        setError('Erro ao processar a requisição. Tente novamente.');
+      }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -61,6 +79,7 @@ function CreateRecipe() {
       <Row className="justify-content-center">
         <Col md={8}>
           <h2 className="mb-4">Criar Nova Receita</h2>
+          {error && <Alert color="danger" className="mb-4">{error}</Alert>}
           <Form onSubmit={handleSubmit}>
             <FormGroup>
               <Label for="title">Título</Label>
@@ -71,6 +90,7 @@ function CreateRecipe() {
                 value={recipe.title}
                 onChange={handleChange}
                 required
+                disabled={loading}
               />
             </FormGroup>
 
@@ -83,6 +103,7 @@ function CreateRecipe() {
                 value={recipe.description}
                 onChange={handleChange}
                 required
+                disabled={loading}
               />
             </FormGroup>
 
@@ -95,6 +116,7 @@ function CreateRecipe() {
                 value={recipe.ingredients}
                 onChange={handleChange}
                 required
+                disabled={loading}
               />
             </FormGroup>
 
@@ -107,6 +129,7 @@ function CreateRecipe() {
                 value={recipe.instructions}
                 onChange={handleChange}
                 required
+                disabled={loading}
               />
             </FormGroup>
 
@@ -119,6 +142,7 @@ function CreateRecipe() {
                 value={recipe.category}
                 onChange={handleChange}
                 required
+                disabled={loading}
               >
                 <option value="cafe-da-manha">Café da Manhã</option>
                 <option value="almoco">Almoço</option>
@@ -136,11 +160,12 @@ function CreateRecipe() {
                 id="image"
                 onChange={handleChange}
                 accept="image/*"
+                disabled={loading}
               />
             </FormGroup>
 
-            <Button color="primary" type="submit">
-              Criar Receita
+            <Button color="primary" type="submit" disabled={loading}>
+              {loading ? 'Criando Receita...' : 'Criar Receita'}
             </Button>
           </Form>
         </Col>
