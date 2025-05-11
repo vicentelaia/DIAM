@@ -6,9 +6,9 @@ import { useAuth } from '../context/AuthContext';
 
 const Register = () => {
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { register } = useAuth();
   const [formData, setFormData] = useState({
-    name: '',
+    username: '',
     email: '',
     password: '',
     confirmPassword: '',
@@ -36,12 +36,11 @@ const Register = () => {
     setLoading(true);
 
     try {
-      const response = await axios.post('/api/auth/register/', {
-        name: formData.name,
+      await register({
+        username: formData.username,
         email: formData.email,
         password: formData.password,
       });
-      login(response.data);
       navigate('/');
     } catch (err) {
       setError(err.response?.data?.message || 'Erro ao registrar');
@@ -65,8 +64,8 @@ const Register = () => {
                   <Form.Label>Nome</Form.Label>
                   <Form.Control
                     type="text"
-                    name="name"
-                    value={formData.name}
+                    name="username"
+                    value={formData.username}
                     onChange={handleChange}
                     required
                   />

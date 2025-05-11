@@ -31,14 +31,11 @@ export const AuthProvider = ({ children }) => {
     }
   }, []);
 
-  const login = async (email, password) => {
+  const login = async (username, password) => {
     try {
-      const response = await axios.post('/api/auth/login/', { email, password });
-      const { token, user } = response.data;
-      localStorage.setItem('token', token);
-      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      setUser(user);
-      return true;
+      const response = await axios.post('/api/auth/login/', { username, password });
+      setUser(response.data.user);
+      return response.data;
     } catch (error) {
       throw error;
     }
@@ -46,12 +43,9 @@ export const AuthProvider = ({ children }) => {
 
   const register = async (userData) => {
     try {
-      const response = await axios.post('/api/auth/register/', userData);
-      const { token, user } = response.data;
-      localStorage.setItem('token', token);
-      axios.defaults.headers.common['Authorization'] = `Bearer ${token}`;
-      setUser(user);
-      return true;
+      const response = await axios.post('/api/auth/signup/', userData);
+      setUser(response.data.user);
+      return response.data;
     } catch (error) {
       throw error;
     }

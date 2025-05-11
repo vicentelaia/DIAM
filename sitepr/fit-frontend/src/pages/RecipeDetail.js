@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 import { Container, Row, Col, Card, Button, Form, Alert, ListGroup } from 'react-bootstrap';
-import api from '../services/api';
+import api from '../api';
 
 const RecipeDetail = () => {
   const { id } = useParams();
@@ -106,7 +106,7 @@ const RecipeDetail = () => {
             <Card.Body>
               <Card.Title as="h1">{recipe.title}</Card.Title>
               <Card.Text className="text-muted">
-                Por {recipe.author.username} • {new Date(recipe.created_at).toLocaleDateString()}
+                Por {recipe.author?.username} • {new Date(recipe.created_at).toLocaleDateString()}
               </Card.Text>
               <Card.Text>{recipe.description}</Card.Text>
             </Card.Body>
@@ -141,7 +141,6 @@ const RecipeDetail = () => {
                     value={comment}
                     onChange={(e) => setComment(e.target.value)}
                     placeholder="Escreva um comentário..."
-                    required
                   />
                 </Form.Group>
                 <Button variant="primary" type="submit" className="mt-2">
@@ -153,7 +152,7 @@ const RecipeDetail = () => {
                 {comments.map((comment) => (
                   <ListGroup.Item key={comment.id}>
                     <div className="d-flex justify-content-between">
-                      <strong>{comment.author.username}</strong>
+                      <strong>{comment.author?.username}</strong>
                       <small className="text-muted">
                         {new Date(comment.created_at).toLocaleDateString()}
                       </small>

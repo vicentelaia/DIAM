@@ -1,18 +1,22 @@
 import axios from 'axios';
 
 const api = axios.create({
-  baseURL: 'http://localhost:8000/api',
+  baseURL: 'http://localhost:8000',
+  withCredentials: true,
   headers: {
     'Content-Type': 'application/json',
   },
 });
 
-// Add a request interceptor
+// Add a request interceptor to include the CSRF token
 api.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem('token');
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
+    const csrfToken = document.cookie.split('; ')
+      .find(row => row.startsWith('csrftoken='))
+      ?.split('=')[1];
+    
+    if (csrfToken) {
+      config.headers['X-CSRFToken'] = csrfToken;
     }
     return config;
   },
@@ -21,12 +25,12 @@ api.interceptors.request.use(
   }
 );
 
-// Add a response interceptor
+// Add a response interceptor to handle errors
 api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      localStorage.removeItem('token');
+      // Handle unauthorized access
       window.location.href = '/login';
     }
     return Promise.reject(error);

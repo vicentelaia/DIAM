@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { Container, Row, Col, Card, Button, Form, InputGroup } from 'react-bootstrap';
-import api from '../services/api';
+import { Container, Row, Col, Card, Button, Form, InputGroup, Alert } from 'react-bootstrap';
+import api from '../api';
 
 const Home = () => {
   const [recipes, setRecipes] = useState([]);
@@ -16,21 +16,23 @@ const Home = () => {
 
   const fetchRecipes = async () => {
     try {
-      const response = await api.get('/recipes/');
-      // Verifica se a resposta tem a propriedade results (paginação do DRF)
+      setLoading(true);
+      const response = await api.get('/api/recipes/');
+      console.log('API Response:', response.data); // Debug log
       const recipesData = response.data.results || response.data;
       setRecipes(Array.isArray(recipesData) ? recipesData : []);
-      setLoading(false);
+      setError('');
     } catch (err) {
       console.error('Erro ao carregar receitas:', err);
-      setError('Erro ao carregar receitas');
+      setError('Erro ao carregar receitas. Por favor, tente novamente mais tarde.');
+    } finally {
       setLoading(false);
     }
   };
 
   const filteredRecipes = Array.isArray(recipes) ? recipes.filter((recipe) => {
-    const matchesSearch = recipe.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      recipe.description.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesSearch = recipe.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      recipe.description?.toLowerCase().includes(searchTerm.toLowerCase());
     const matchesCategory = !selectedCategory || recipe.category === selectedCategory;
     return matchesSearch && matchesCategory;
   }) : [];
@@ -45,8 +47,8 @@ const Home = () => {
 
   if (error) {
     return (
-      <Container className="py-5 text-center">
-        <p className="text-danger">{error}</p>
+      <Container className="py-5">
+        <Alert variant="danger">{error}</Alert>
       </Container>
     );
   }
@@ -99,7 +101,7 @@ const Home = () => {
                 <Card.Body>
                   <Card.Title>{recipe.title}</Card.Title>
                   <Card.Text>
-                    {recipe.description.length > 100
+                    {recipe.description?.length > 100
                       ? `${recipe.description.substring(0, 100)}...`
                       : recipe.description}
                   </Card.Text>
@@ -108,7 +110,7 @@ const Home = () => {
                       <Button variant="primary">Ver Receita</Button>
                     </Link>
                     <small className="text-muted">
-                      {recipe.likes_count} curtidas
+                      {recipe.likes_count || 0} curtidas
                     </small>
                   </div>
                 </Card.Body>
