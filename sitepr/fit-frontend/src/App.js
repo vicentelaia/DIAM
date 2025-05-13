@@ -9,19 +9,24 @@ import CreateRecipe from './pages/CreateRecipe';
 import Profile from './pages/Profile';
 import Login from './pages/Login';
 import SimpleLoginManager from './pages/SimpleLoginManager';
+import Register from './pages/Register';
+import RecipeList from './pages/RecipeList';
+import './App.css';
 
 function App() {
   return (
     <AuthProvider>
       <Router>
-        <Navbar />
-        <div className="container py-4">
+        <div className="App">
+          <Navbar />
           <Routes>
             <Route path="/" element={<Home />} />
-            <Route path="/recipe/:id" element={<RecipeDetail />} />
-            <Route path="/create-recipe" element={<CreateRecipe />} />
-            <Route path="/profile" element={<Profile />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/create-recipe" element={<CreateRecipe />} />
+            <Route path="/recipes" element={<RecipeList />} />
+            <Route path="/recipes/:id" element={<RecipeDetail />} />
+            <Route path="/profile" element={<Profile />} />
             <Route path="/SimpleLoginManager" element={<SimpleLoginManager />} />
           </Routes>
         </div>
