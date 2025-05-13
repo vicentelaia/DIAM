@@ -12,6 +12,7 @@ from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_POST
 from django.http import JsonResponse
 import json
+from rest_framework.authtoken.models import Token
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
@@ -32,17 +33,23 @@ def signup(request):
 def login_view(request):
     username = request.data.get('username')
     password = request.data.get('password')
+    print(f"Login attempt for user: {username}")  # Debug log
+    
     if not username or not password:
         return Response({'message': 'Please provide both username and password'}, status=status.HTTP_400_BAD_REQUEST)
+    
     user = authenticate(username=username, password=password)
     if user:
+        # Create or get token
+        token, _ = Token.objects.get_or_create(user=user)
         login(request, user)
-        serializer = UserSerializer(user)
+        
+        # Return just the token
         return Response({
-            'user': serializer.data,
-            'message': 'Login successful'
+            'token': token.key
         })
     else:
+        print(f"Login failed for user: {username}")  # Debug log
         return Response({'message': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
 
 @api_view(['POST'])
