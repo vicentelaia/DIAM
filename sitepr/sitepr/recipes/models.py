@@ -6,6 +6,12 @@ class User(AbstractUser):
     is_admin = models.BooleanField(default=False)
     avatar = models.ImageField(upload_to='avatars/', null=True, blank=True)
     bio = models.TextField(max_length=500, blank=True)
+<<<<<<< HEAD
+    phone_number = models.CharField(max_length=15, blank=True, null=True)
+    date_of_birth = models.DateField(null=True, blank=True)
+    address = models.TextField(max_length=200, blank=True)
+=======
+>>>>>>> b13e957 (Frotend atualizado)
 
 class Recipe(models.Model):
     CATEGORY_CHOICES = [

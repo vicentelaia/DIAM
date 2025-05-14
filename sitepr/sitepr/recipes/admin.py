@@ -3,9 +3,15 @@ from .models import User, Recipe, Comment, Favorite
 
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
+<<<<<<< HEAD
+    list_display = ('username', 'email', 'first_name', 'last_name', 'is_admin')
+    list_filter = ('is_admin',)
+    search_fields = ('username', 'email', 'first_name', 'last_name')
+=======
     list_display = ('username', 'email', 'is_admin', 'date_joined')
     list_filter = ('is_admin', 'is_staff', 'is_active')
     search_fields = ('username', 'email')
+>>>>>>> b13e957 (Frotend atualizado)
 
 @admin.register(Recipe)
 class RecipeAdmin(admin.ModelAdmin):

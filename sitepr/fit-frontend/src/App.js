@@ -8,7 +8,6 @@ import RecipeDetail from './pages/RecipeDetail';
 import CreateRecipe from './pages/CreateRecipe';
 import Profile from './pages/Profile';
 import Login from './pages/Login';
-import SimpleLoginManager from './pages/SimpleLoginManager';
 import Register from './pages/Register';
 import RecipeList from './pages/RecipeList';
 import './App.css';
@@ -17,19 +16,51 @@ function App() {
   return (
     <AuthProvider>
       <Router>
-        <div className="App">
-          <Navbar />
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/create-recipe" element={<CreateRecipe />} />
-            <Route path="/recipes" element={<RecipeList />} />
-            <Route path="/recipes/:id" element={<RecipeDetail />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/SimpleLoginManager" element={<SimpleLoginManager />} />
-          </Routes>
-        </div>
+        <Routes>
+          {/* Public routes */}
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+
+          {/* Temporarily unprotected routes for development */}
+          <Route path="/" element={
+            <div className="App">
+              <Navbar />
+              <Home />
+            </div>
+          } />
+          <Route path="/create-recipe" element={
+            <div className="App">
+              <Navbar />
+              <CreateRecipe />
+            </div>
+          } />
+          <Route path="/recipes" element={
+            <div className="App">
+              <Navbar />
+              <RecipeList />
+            </div>
+          } />
+          <Route path="/recipes/:id" element={
+            <div className="App">
+              <Navbar />
+              <RecipeDetail />
+            </div>
+          } />
+          <Route path="/profile" element={
+            <div className="App">
+              <Navbar />
+              <Profile />
+            </div>
+          } />
+
+          {/* Catch all route */}
+          <Route path="*" element={
+            <div className="App">
+              <Navbar />
+              <Home />
+            </div>
+          } />
+        </Routes>
       </Router>
     </AuthProvider>
   );
