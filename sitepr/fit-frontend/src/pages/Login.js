@@ -1,21 +1,31 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Container, Form, Button, FloatingLabel } from 'react-bootstrap';
+import { Container, Form, Button, FloatingLabel, Alert } from 'react-bootstrap';
+import { useAuth } from '../context/AuthContext';
 import './Login.css';
 
 const Login = () => {
-  const [email, setEmail] = useState('');
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const { login } = useAuth();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError('');
+    setLoading(true);
 
-    // Temporariamente, apenas navega para a página inicial
-    // Isso será substituído pela lógica real de login quando o backend estiver pronto
-    navigate('/');
+    try {
+      await login(username, password);
+      navigate('/');
+    } catch (error) {
+      console.error('Login error:', error.response?.data);
+      setError(error.response?.data?.message || 'Invalid username or password');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -39,23 +49,24 @@ const Login = () => {
           </div>
 
           {error && (
-            <div className="error-message">
+            <Alert variant="danger" className="error-message">
               {error}
-            </div>
+            </Alert>
           )}
 
-          <Form className="login-form" onSubmit={handleSubmit}>
+          <Form onSubmit={handleSubmit}>
             <FloatingLabel
-              controlId="email"
-              label="Email"
+              controlId="username"
+              label="Username"
               className="mb-3"
             >
               <Form.Control
-                type="email"
-                placeholder="seu@email.com"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                type="text"
+                placeholder="Username"
+                value={username}
+                onChange={(e) => setUsername(e.target.value)}
                 required
+                disabled={loading}
               />
             </FloatingLabel>
 
@@ -69,14 +80,16 @@ const Login = () => {
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
+                disabled={loading}
               />
             </FloatingLabel>
 
             <Button 
               type="submit" 
               className="login-button"
+              disabled={loading}
             >
-              Entrar
+              {loading ? 'Entrando...' : 'Entrar'}
             </Button>
           </Form>
 
