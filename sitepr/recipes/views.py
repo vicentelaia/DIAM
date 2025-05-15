@@ -5,6 +5,7 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User
 from django.shortcuts import get_object_or_404
+from django_filters.rest_framework import DjangoFilterBackend
 from .models import User, Recipe, Comment, Favorite
 from .serializers import UserSerializer, RecipeSerializer, CommentSerializer, FavoriteSerializer
 from .permissions import IsAdminOrReadOnly, IsAuthorOrReadOnly
@@ -13,6 +14,7 @@ from django.views.decorators.http import require_POST
 from django.http import JsonResponse
 import json
 from rest_framework.authtoken.models import Token
+from django.db import models
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
@@ -88,6 +90,36 @@ class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
     serializer_class = RecipeSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly, IsAuthorOrReadOnly]
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter, filters.OrderingFilter]
+    filterset_fields = ['category', 'author', 'is_featured']
+    search_fields = ['title', 'description', 'ingredients']
+    ordering_fields = ['created_at', 'title', 'likes']
+    ordering = ['-created_at']  # Default ordering
+
+    def get_queryset(self):
+        queryset = Recipe.objects.all()
+        
+        # Filtrar por categoria
+        category = self.request.query_params.get('category', None)
+        if category:
+            queryset = queryset.filter(category=category)
+            
+        # Filtrar receitas favoritas do usuário atual
+        favorites_only = self.request.query_params.get('favorites', None)
+        if favorites_only and self.request.user.is_authenticated:
+            queryset = queryset.filter(favorited_by__user=self.request.user)
+            
+        # Filtrar receitas mais curtidas
+        most_liked = self.request.query_params.get('most_liked', None)
+        if most_liked:
+            queryset = queryset.order_by('-likes')
+            
+        # Filtrar receitas mais recentes
+        latest = self.request.query_params.get('latest', None)
+        if latest:
+            queryset = queryset.order_by('-created_at')
+            
+        return queryset
 
     def perform_create(self, serializer):
         serializer.save(author=self.request.user)
@@ -109,6 +141,20 @@ class RecipeViewSet(viewsets.ModelViewSet):
             favorite.delete()
             return Response({'status': 'unfavorited'})
         return Response({'status': 'favorited'})
+
+    @action(detail=False)
+    def stats(self, request):
+        total_recipes = Recipe.objects.count()
+        total_likes = sum(recipe.likes.count() for recipe in Recipe.objects.all())
+        most_liked = Recipe.objects.annotate(like_count=models.Count('likes')).order_by('-like_count')[:5]
+        latest_recipes = Recipe.objects.order_by('-created_at')[:5]
+        
+        return Response({
+            'total_recipes': total_recipes,
+            'total_likes': total_likes,
+            'most_liked_recipes': RecipeSerializer(most_liked, many=True).data,
+            'latest_recipes': RecipeSerializer(latest_recipes, many=True).data
+        })
 
 class CommentViewSet(viewsets.ModelViewSet):
     queryset = Comment.objects.all()

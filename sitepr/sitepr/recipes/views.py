@@ -85,6 +85,22 @@ class UserViewSet(viewsets.ModelViewSet):
         serializer = self.get_serializer(request.user)
         return Response(serializer.data)
 
+    @action(detail=False, methods=['post'])
+    def update_avatar(self, request):
+        if 'avatar' not in request.FILES:
+            return Response({'error': 'No image file provided'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Delete old avatar if it exists
+        if request.user.avatar:
+            request.user.avatar.delete(save=False)
+        
+        # Update with new avatar
+        request.user.avatar = request.FILES['avatar']
+        request.user.save()
+        
+        serializer = self.get_serializer(request.user)
+        return Response(serializer.data)
+
 class RecipeViewSet(viewsets.ModelViewSet):
     queryset = Recipe.objects.all()
     serializer_class = RecipeSerializer

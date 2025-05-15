@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { AuthProvider } from './context/AuthContext';
 import Navbar from './components/Navbar';
+import PrivateRoute from './components/PrivateRoute';
 import Home from './pages/Home';
 import RecipeDetail from './pages/RecipeDetail';
 import CreateRecipe from './pages/CreateRecipe';
@@ -20,18 +21,10 @@ function App() {
           {/* Public routes */}
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-
-          {/* Temporarily unprotected routes for development */}
           <Route path="/" element={
             <div className="App">
               <Navbar />
               <Home />
-            </div>
-          } />
-          <Route path="/create-recipe" element={
-            <div className="App">
-              <Navbar />
-              <CreateRecipe />
             </div>
           } />
           <Route path="/recipes" element={
@@ -46,11 +39,23 @@ function App() {
               <RecipeDetail />
             </div>
           } />
+
+          {/* Protected routes */}
+          <Route path="/create-recipe" element={
+            <PrivateRoute>
+              <div className="App">
+                <Navbar />
+                <CreateRecipe />
+              </div>
+            </PrivateRoute>
+          } />
           <Route path="/profile" element={
-            <div className="App">
-              <Navbar />
-              <Profile />
-            </div>
+            <PrivateRoute>
+              <div className="App">
+                <Navbar />
+                <Profile />
+              </div>
+            </PrivateRoute>
           } />
 
           {/* Catch all route */}
