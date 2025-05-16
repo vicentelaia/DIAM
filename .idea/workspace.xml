@@ -1,11 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
   <component name="ChangeListManager">
-    <list default="true" id="4e3e53f3-1543-4241-80de-8cab16789435" name="Changes" comment="" />
+    <list default="true" id="4e3e53f3-1543-4241-80de-8cab16789435" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sitepr/db.sqlite3" beforeDir="false" afterPath="$PROJECT_DIR$/sitepr/db.sqlite3" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sitepr/fit-frontend/src/App.js" beforeDir="false" afterPath="$PROJECT_DIR$/sitepr/fit-frontend/src/App.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/sitepr/fit-frontend/src/pages/Login.js" beforeDir="false" afterPath="$PROJECT_DIR$/sitepr/fit-frontend/src/pages/Login.js" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
   </component>
   <component name="ProjectId" id="2wgmoPQEz9X893D86ja0GtQ5331" />
   <component name="ProjectViewState">
@@ -16,7 +31,13 @@
   &quot;keyToString&quot;: {
     &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
     &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
     &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
     &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
 }</component>
@@ -54,6 +75,9 @@
       <updated>1746471764959</updated>
       <workItem from="1746471766912" duration="224000" />
       <workItem from="1746472190726" duration="191000" />
+      <workItem from="1747398461738" duration="1587000" />
+      <workItem from="1747400131808" duration="2341000" />
+      <workItem from="1747405557809" duration="758000" />
     </task>
     <servers />
   </component>

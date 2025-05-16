@@ -19,7 +19,7 @@ const Login = () => {
 
     try {
       await login(username, password);
-      navigate('/');
+      navigate('/home');
     } catch (error) {
       console.error('Login error:', error.response?.data);
       setError(error.response?.data?.message || 'Invalid username or password');

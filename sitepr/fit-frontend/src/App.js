@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import {BrowserRouter as Router, Routes, Route, Navigate} from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { AuthProvider } from './context/AuthContext';
 import Navbar from './components/Navbar';
@@ -22,11 +22,13 @@ function App() {
           <Route path="/register" element={<Register />} />
 
           {/* Temporarily unprotected routes for development */}
-          <Route path="/" element={
+          <Route path="/" element={<Navigate to="/login" />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/home" element={
             <div className="App">
               <Navbar />
               <Home />
-            </div>
+          </div>
           } />
           <Route path="/create-recipe" element={
             <div className="App">
