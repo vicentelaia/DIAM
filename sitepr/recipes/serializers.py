@@ -4,25 +4,24 @@ from .models import User, Recipe, Comment, Favorite
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ('id', 'username', 'email', 'first_name', 'last_name', 'avatar', 'bio', 'is_admin')
+        fields = ('id', 'username', 'email', 'first_name', 'last_name', 'avatar', 'bio', 'is_admin', 'is_superuser')
         read_only_fields = ('id', 'is_admin')
 
 class RecipeSerializer(serializers.ModelSerializer):
     author = UserSerializer(read_only=True)
+    likes = serializers.PrimaryKeyRelatedField(many=True, read_only=True)
     likes_count = serializers.SerializerMethodField()
-    comments_count = serializers.SerializerMethodField()
     is_liked = serializers.SerializerMethodField()
-    is_favorited = serializers.SerializerMethodField()
 
     class Meta:
         model = Recipe
-        fields = ('id', 'title', 'description', 'ingredients', 'instructions', 'image',
-                 'category', 'author', 'created_at', 'updated_at', 'likes_count',
-                 'comments_count', 'is_liked', 'is_favorited', 'is_featured')
-        read_only_fields = ('author', 'created_at', 'updated_at')
+        fields = ['id', 'title', 'description', 'ingredients', 'instructions', 
+                 'image', 'category', 'author', 'created_at', 'likes','likes_count', 
+                 'is_liked']
 
     def get_likes_count(self, obj):
         return obj.likes.count()
+
 
     def get_comments_count(self, obj):
         return obj.comments.count()

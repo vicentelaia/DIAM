@@ -11,6 +11,7 @@ const Home = () => {
   const [error, setError] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
+  const [user, setUser] = useState(null);
 
   const categories = [
     { id: 'cafe-da-manha', name: 'Café da Manhã', icon: <FaCoffee /> },
@@ -21,7 +22,16 @@ const Home = () => {
   ];
 
   useEffect(() => {
+    const fetchUser = async () => {
+      try {
+        const response = await api.get('/api/auth/user/');
+        setUser(response.data);
+      } catch (err) {
+        console.error('Erro ao carregar usuário:', err);
+      }
+    };
     fetchRecipes();
+    fetchUser();
   }, []);
 
   const fetchRecipes = async () => {
@@ -39,12 +49,36 @@ const Home = () => {
     }
   };
 
-  const filteredRecipes = Array.isArray(recipes) ? recipes.filter((recipe) => {
-    const matchesSearch = recipe.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      recipe.description?.toLowerCase().includes(searchTerm.toLowerCase());
-    const matchesCategory = !selectedCategory || recipe.category === selectedCategory;
-    return matchesSearch && matchesCategory;
-  }) : [];
+  const filteredRecipes = Array.isArray(recipes)
+    ? recipes.filter((recipe) => {
+        const matchesSearch =
+          recipe.title?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          recipe.description?.toLowerCase().includes(searchTerm.toLowerCase());
+        const matchesCategory = !selectedCategory || recipe.category === selectedCategory;
+        return matchesSearch && matchesCategory;
+      })
+    : [];
+
+  const handleLike = async (recipeId) => {
+    try {
+      await api.post(`/api/recipes/${recipeId}/like/`);
+      fetchRecipes();
+    } catch (err) {
+      console.error('Erro ao curtir:', err);
+    }
+  };
+
+  const handleDelete = async (recipeId) => {
+    if (!window.confirm('Tem certeza que deseja remover esta receita?')) return;
+
+    try {
+      await api.delete(`/api/recipes/${recipeId}/`);
+      setRecipes((prev) => prev.filter((recipe) => recipe.id !== recipeId));
+    } catch (err) {
+      console.error('Erro ao remover receita:', err);
+      alert('Erro ao remover receita.');
+    }
+  };
 
   return (
     <div className="home-page">
@@ -83,8 +117,10 @@ const Home = () => {
               className="category-select"
             >
               <option value="">Todas as categorias</option>
-              {categories.map(cat => (
-                <option key={cat.id} value={cat.id}>{cat.name}</option>
+              {categories.map((cat) => (
+                <option key={cat.id} value={cat.id}>
+                  {cat.name}
+                </option>
               ))}
             </Form.Select>
           </Col>
@@ -97,9 +133,10 @@ const Home = () => {
         <Row>
           {categories.map((category) => (
             <Col key={category.id} xs={6} md={4} lg={2} className="mb-4">
-              <Card 
-                className="category-card text-center" 
+              <Card
+                className="category-card text-center"
                 onClick={() => setSelectedCategory(category.id)}
+                style={{ cursor: 'pointer' }}
               >
                 <Card.Body>
                   <div className="category-icon">{category.icon}</div>
@@ -155,13 +192,34 @@ const Home = () => {
                     <Card.Footer className="bg-white">
                       <div className="d-flex justify-content-between align-items-center">
                         <Link to={`/recipe/${recipe.id}`} className="text-decoration-none">
-                          <Button variant="success" size="sm">Ver Receita</Button>
+                          <Button variant="success" size="sm">
+                            Ver Receita
+                          </Button>
                         </Link>
                         <div className="d-flex align-items-center">
-                          <FaHeart className="text-danger me-1" />
-                          <small className="text-muted">
-                            {recipe.likes_count || 0}
-                          </small>
+                          <Button
+                            variant="link"
+                            className="p-0 me-2"
+                            onClick={() => handleLike(recipe.id)}
+                          >
+                            <FaHeart
+                              className={
+                                recipe.likes?.includes(user?.id) ? 'text-danger' : 'text-muted'
+                              }
+                            />
+                          </Button>
+
+                          <small className="text-muted me-3">{recipe.likes_count || 0}</small>
+
+                          {user?.is_superuser && (
+                            <Button
+                              variant="danger"
+                              size="sm"
+                              onClick={() => handleDelete(recipe.id)}
+                            >
+                              Remover
+                            </Button>
+                          )}
                         </div>
                       </div>
                     </Card.Footer>
@@ -176,4 +234,4 @@ const Home = () => {
   );
 };
 
-export default Home; 
+export default Home;
