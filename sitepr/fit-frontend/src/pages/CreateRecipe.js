@@ -70,7 +70,7 @@ const CreateRecipe = () => {
 
       console.log('Recipe created:', response.data);
       alert('Receita criada com sucesso!');
-      navigate('/');
+      navigate('/home');
     } catch (error) {
       console.error('Error creating recipe:', error.response?.data);
       setError(error.response?.data?.message || 'Erro ao criar receita. Por favor, tente novamente.');
