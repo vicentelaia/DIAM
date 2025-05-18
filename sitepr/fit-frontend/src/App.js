@@ -4,7 +4,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { AuthProvider } from './context/AuthContext';
 import Navbar from './components/Navbar';
 import Home from './pages/Home';
-import RecipeDetail from './pages/RecipeDetail';
+
 import CreateRecipe from './pages/CreateRecipe';
 import Profile from './pages/Profile';
 import Login from './pages/Login';
@@ -42,12 +42,7 @@ function App() {
               <RecipeList />
             </div>
           } />
-          <Route path="/recipes/:id" element={
-            <div className="App">
-              <Navbar />
-              <RecipeDetail />
-            </div>
-          } />
+          
           <Route path="/profile" element={
             <div className="App">
               <Navbar />
