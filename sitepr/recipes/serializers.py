@@ -39,12 +39,11 @@ class RecipeSerializer(serializers.ModelSerializer):
         return False
 
 class CommentSerializer(serializers.ModelSerializer):
-    author = UserSerializer(read_only=True)
+    author = serializers.StringRelatedField(read_only=True)
 
     class Meta:
         model = Comment
-        fields = ('id', 'recipe', 'author', 'content', 'created_at', 'updated_at')
-        read_only_fields = ('author', 'created_at', 'updated_at')
+        fields = ['id', 'author', 'content', 'created_at']
 
 class FavoriteSerializer(serializers.ModelSerializer):
     recipe = RecipeSerializer(read_only=True)

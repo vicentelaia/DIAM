@@ -4,6 +4,7 @@ import { Container, Row, Col, Card, Button, Form, InputGroup, Alert, Spinner } f
 import { FaSearch, FaHeart, FaUtensils, FaCoffee, FaCarrot, FaAppleAlt } from 'react-icons/fa';
 import api from '../api';
 import './Home.css';
+import { Modal } from 'react-bootstrap';
 
 const Home = () => {
   const [recipes, setRecipes] = useState([]);
@@ -12,6 +13,8 @@ const Home = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('');
   const [user, setUser] = useState(null);
+  const [showModal, setShowModal] = useState(false);
+  const [selectedRecipe, setSelectedRecipe] = useState(null);
 
   const categories = [
     { id: 'cafe-da-manha', name: 'Café da Manhã', icon: <FaCoffee /> },
@@ -78,6 +81,16 @@ const Home = () => {
       console.error('Erro ao remover receita:', err);
       alert('Erro ao remover receita.');
     }
+  };
+
+    const handleShowRecipe = (recipe) => {
+    setSelectedRecipe(recipe);
+    setShowModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setShowModal(false);
+    setSelectedRecipe(null);
   };
 
   return (
@@ -191,11 +204,9 @@ const Home = () => {
                     </Card.Body>
                     <Card.Footer className="bg-white">
                       <div className="d-flex justify-content-between align-items-center">
-                        <Link to={`/recipe/${recipe.id}`} className="text-decoration-none">
-                          <Button variant="success" size="sm">
-                            Ver Receita
-                          </Button>
-                        </Link>
+                        <Button variant="success" size="sm" onClick={() => handleShowRecipe(recipe)}>
+                          Ver Receita
+                        </Button>
                         <div className="d-flex align-items-center">
                           <Button
                             variant="link"
@@ -230,8 +241,53 @@ const Home = () => {
           </Row>
         )}
       </Container>
+      <Modal show={showModal} onHide={handleCloseModal} size="lg" centered>
+  <Modal.Header closeButton>
+    <Modal.Title>{selectedRecipe?.title}</Modal.Title>
+  </Modal.Header>
+  <Modal.Body>
+    {selectedRecipe?.image && (
+      <img
+        src={selectedRecipe.image}
+        alt={selectedRecipe.title}
+        className="img-fluid mb-3"
+        style={{ width: '100%', maxHeight: '400px', objectFit: 'cover' }}
+      />
+    )}
+    <p><strong>Descrição:</strong> {selectedRecipe?.description}</p>
+    <p><strong>Categoria:</strong> {selectedRecipe?.category}</p>
+
+    {/* Se tiver ingredientes e instruções no seu objeto receita */}
+    {selectedRecipe?.ingredients && (
+      <>
+        <h5>Ingredientes:</h5>
+        <p>{selectedRecipe.ingredients.split(',').join(', ')}</p>
+
+      </>
+    )}
+
+    {selectedRecipe?.instructions && (
+      <>
+        <h5>Modo de Preparo:</h5>
+        <p>{selectedRecipe.instructions}</p>
+      </>
+    )}
+  </Modal.Body>
+  <Modal.Footer>
+    <Button variant="secondary" onClick={handleCloseModal}>
+      Fechar
+    </Button>
+  </Modal.Footer>
+</Modal>
+
+
     </div>
+    
   );
 };
+
+
+
+
 
 export default Home;

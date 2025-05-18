@@ -9,12 +9,8 @@ const NavigationBar = () => {
         <Navbar.Brand as={Link} to="/">Fit & Sabor</Navbar.Brand>
         <Navbar.Toggle aria-controls="basic-navbar-nav" />
         <Navbar.Collapse id="basic-navbar-nav">
-          <Nav className="me-auto">
-            <Nav.Link as={Link} to="/search">
-              <i className="bi bi-search"></i> Pesquisar
-            </Nav.Link>
-          </Nav>
-          <Nav>
+          
+          <Nav className="ms-auto">
             <Button
               variant="light"
               className="me-2"

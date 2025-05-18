@@ -30,7 +30,7 @@ const Login = () => {
 
   return (
     <div className="login-container">
-      <Container>
+      
         <div className="login-card">
           <div className="login-header">
             <div className="brand-logo-container">
@@ -98,7 +98,7 @@ const Login = () => {
             <Link to="/register">Cadastre-se</Link>
           </div>
         </div>
-      </Container>
+      
     </div>
   );
 };

@@ -1,23 +1,25 @@
 .login-container {
-  min-height: 100vh;
+  height: 100vh;            /* Ocupa toda a altura da tela */
   display: flex;
-  align-items: center;
-  justify-content: center;
+  justify-content: center;  /* Centraliza horizontalmente */
+  align-items: center;      /* Centraliza verticalmente */
   background: linear-gradient(135deg, #4CAF50 0%, #2E7D32 50%, #1B5E20 100%);
   padding: 20px;
   box-sizing: border-box;
 }
 
+
 .login-card {
   background: rgba(255, 255, 255, 0.98);
   border-radius: 20px;
-  padding: 40px;
+  padding: 2.5rem; /* 40px em rem */
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
   width: 100%;
   max-width: 420px;
   backdrop-filter: blur(10px);
   text-align: center;
 }
+
 
 .login-header {
   margin-bottom: 35px;

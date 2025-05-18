@@ -13,6 +13,7 @@ from django.views.decorators.http import require_POST
 from django.http import JsonResponse
 import json
 from rest_framework.authtoken.models import Token
+from rest_framework import generics
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
@@ -112,7 +113,6 @@ class RecipeViewSet(viewsets.ModelViewSet):
             favorite.delete()
             return Response({'status': 'unfavorited'})
         return Response({'status': 'favorited'})
-
 class CommentViewSet(viewsets.ModelViewSet):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
@@ -124,6 +124,19 @@ class CommentViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         return Comment.objects.filter(recipe_id=self.kwargs['recipe_pk'])
+
+
+class CommentListCreateView(generics.ListCreateAPIView):
+    serializer_class = CommentSerializer
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+
+    def get_queryset(self):
+        recipe_id = self.kwargs['pk']
+        return Comment.objects.filter(recipe_id=recipe_id).order_by('-created_at')
+
+    def perform_create(self, serializer):
+        recipe = Recipe.objects.get(pk=self.kwargs['pk'])
+        serializer.save(author=self.request.user, recipe=recipe)
 
 class FavoriteViewSet(viewsets.ModelViewSet):
     serializer_class = FavoriteSerializer
